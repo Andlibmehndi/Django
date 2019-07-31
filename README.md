@@ -1,0 +1,3 @@
+# Django polls app
+
+
