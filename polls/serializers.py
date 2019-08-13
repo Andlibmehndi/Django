@@ -10,3 +10,10 @@ class QuestionSerializer(serializers.Serializer):
     # DRF serializer.save() calls self.create(self.validated_data)
     def create(self, validated_data):
         return Question.objects.create(**validated_data)
+
+    # Add update() implementation on QuestionSerializer
+    def update(self, instance, validated_data):
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance
