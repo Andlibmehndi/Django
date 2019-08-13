@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404
 import json
 
 from .models import Question, Choice
-from .serializers import QuestionSerializer,ChoiceSerializer
+#from .serializers import QuestionSerializer,ChoiceSerializer
+from .serializers import QuestionListPageSerializer,ChoiceSerializer,QuestionDetailPageSerializer
 
 
 @api_view(['GET', 'POST'])
@@ -17,11 +18,11 @@ def questions_view(request):
         #     question_representation = {'question_text': question.question_text, 'pub_date': question.pub_date.strftime("%Y-%m-%d")}
         #     questions.append(question_representation)
         questions = Question.objects.all()
-        serializer = QuestionSerializer(questions, many=True)
+        serializer = QuestionListPageSerializer(questions, many=True)
         return Response(serializer.data)
         #return HttpResponse(json.dumps(questions), content_type='application/json')
     elif request.method == 'POST':
-        serializer = QuestionSerializer(data=request.data)
+        serializer = QuestionListPageSerializer(data=request.data)
         if serializer.is_valid():
             # question_text = serializer.data['question_text']
             # pub_date = serializer.data['pub_date']
@@ -29,20 +30,20 @@ def questions_view(request):
             # Question.objects.create(**serializer.validated_data)
             # return Response("Question created", status=status.HTTP_201_CREATED)
             question = serializer.save()
-            return Response(QuestionSerializer(question).data, status=status.HTTP_201_CREATED)
+            return Response(QuestionListPageSerializer(question).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PATCH', 'DELETE'])
 def question_detail_view(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     if request.method == 'GET':
-        serializer = QuestionSerializer(question)
+        serializer = QuestionDetailPageSerializer(question)
         return Response(serializer.data)
     elif request.method == 'PATCH':
-        serializer = QuestionSerializer(question, data=request.data, partial=True)
+        serializer = QuestionDetailPageSerializer(question, data=request.data, partial=True)
         if serializer.is_valid():
             question = serializer.save()
-            return Response(QuestionSerializer(question).data)
+            return Response(QuestionDetailPageSerializer(question).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         question.delete()
