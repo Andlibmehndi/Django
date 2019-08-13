@@ -18,6 +18,10 @@ class Question(models.Model):
     was_published_recently.boolean = True
     was_published_recently.short_description = 'Published recently?'
 
+    # Add this method to model Question
+    def verbose_question_text(self):
+        return "Question : %s" % (self.question_text)
+
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
