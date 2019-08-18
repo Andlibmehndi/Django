@@ -9,6 +9,9 @@ class ChoiceSerializer(serializers.Serializer):
     def create(self, validated_data):
         return Choice.objects.create(**validated_data)
 
+class ChoiceSerializerWithVotes(ChoiceSerializer):
+    votes = serializers.IntegerField(read_only=True)
+
 # class QuestionSerializer(serializers.Serializer):
 #     question_text = serializers.CharField(max_length=200)
 #     pub_date = serializers.DateTimeField()
@@ -47,5 +50,9 @@ class QuestionListPageSerializer(serializers.Serializer):
 class QuestionDetailPageSerializer(QuestionListPageSerializer):
     choices = ChoiceSerializer(many=True, read_only=True)
 
+class QuestionResultPageSerializer(QuestionListPageSerializer):
+    choices = ChoiceSerializerWithVotes(many=True, read_only=True)
+
 class VoteSerializer(serializers.Serializer):
     choice_id = serializers.IntegerField()
+
